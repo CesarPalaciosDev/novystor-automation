@@ -1,0 +1,8 @@
+config.py
+digicertificate.pem
+.venv
+/novy-venv
+/__pycache__
+/logs
+.env
+.vscode

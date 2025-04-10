@@ -1,0 +1,14 @@
+cryptography==42.0.5
+pymysql==1.0.2
+numpy~=1.26
+sqlalchemy==2.0.25
+pandas==2.1.4
+requests==2.31.0
+textdistance==4.2.1
+openpyxl==3.0.10
+bleach==4.1.0
+nltk==3.8.1
+flask==3.1.0
+python-dotenv==1.1.0
+gunicorn==23.0.0
+pytz==2025.2
