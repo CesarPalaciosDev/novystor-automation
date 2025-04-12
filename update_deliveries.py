@@ -77,7 +77,7 @@ merchant_id = MERCHANT_ID
 
 #Write total rows read to csv log
 writeCsvLog(CSV_FILE, "INFO", "Getting deliveries from checkouts", f"Total rows read {len(result)}")
-
+logger.info(f"Total rows read {len(result)}")
 
 #print(len(result))
 for id in result:
@@ -160,3 +160,4 @@ elapsed_time = et - st
 
 logger.info('Trabajo completado.')
 writeCsvLog(CSV_FILE, "INFO", "Job succeded",  f"This job has been completed succesfully in {elapsed_time} seconds")
+logger.info(f"This job has been completed succesfully in {elapsed_time} seconds")

@@ -434,6 +434,7 @@ def check_diferences_and_update_deliverys(CSV_FILE, data, deliverys, engine):
                 sys.exit(0)            
         session.commit()
         writeCsvLog(CSV_FILE, "INFO", "Upload info", f"Rows created {created_counter} Rows updated {updated_counter}")
+        logger.error(f"Rows created {created_counter} Rows updated {updated_counter}")
 
 def check_difference_and_update_checkouts(CSV_FILE, data, checkouts, engine):
     """Funcion para actualizacion de ventas/checkouts.
@@ -499,3 +500,4 @@ def check_difference_and_update_checkouts(CSV_FILE, data, checkouts, engine):
                 sys.exit(0)
         session.commit()
         writeCsvLog(CSV_FILE, "INFO", "Upload info", f"Rows created {created_counter} Rows updated {updated_counter}")
+        logger.error(f"Rows created {created_counter} Rows updated {updated_counter}")

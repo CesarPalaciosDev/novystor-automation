@@ -98,6 +98,7 @@ for p in range(0, pages):
 # Now the information completed
 logger.info('Cargando informacion de ventas.')
 writeCsvLog(CSV_FILE, "INFO", "Total checkouts", f"Total checkouts retrieved in API call {len(ids)}")
+logger.info(f"Total checkouts retrieved in API call {len(ids)}")
 
 ventas = []
 count = 0
@@ -169,3 +170,4 @@ check_difference_and_update_checkouts(CSV_FILE,df, checkouts, engine)
 et = time.time()
 elapsed_time = et - st
 writeCsvLog(CSV_FILE, "INFO", "Job succeded",  f"This job has been completed succesfully in {elapsed_time} seconds")
+logger.info(f"This job has been completed succesfully in {elapsed_time} seconds")
