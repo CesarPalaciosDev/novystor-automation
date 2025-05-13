@@ -8,11 +8,19 @@ import requests
 from models import auth_app, Product, Attributes
 from datetime import datetime, timezone
 from utils import *
+import json
 from time import sleep
 from dotenv import load_dotenv
 load_dotenv()
 
 
+LOGS_PATH = os.getenv("LOGS_PATH")
+SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+ssl = os.getenv("ssl")
+SECRET_KEY = os.getenv("SECRET_KEY")
+MERCHANT_ID = os.getenv("MERCHANT_ID")
+DAYS_TO_FETCH = os.getenv("DAYS")
+CSV_FILE = f"{LOGS_PATH}/deliveries_log.csv"
 
 # Setting up logger
 logger = logging.getLogger(__name__)
@@ -20,10 +28,10 @@ logging.basicConfig(format='%(asctime)s: %(message)s', stream=sys.stdout,
                     level=logging.INFO)
 
 # Making engine
-engine = create_engine(config.SQLALCHEMY_DATABASE_URI,
+engine = create_engine(SQLALCHEMY_DATABASE_URI,
                        connect_args={
                             "ssl": {
-                                "ca":config.ssl
+                                "ca":ssl
                                 }     
                             }
                        )
@@ -44,11 +52,11 @@ if diff.total_seconds()/3600 > 6:
     sys.exit(0)
 
 # Decrypt token
-token = decrypt(last_auth.token, config.SECRET_KEY)
-
+token = decrypt(last_auth.token, SECRET_KEY)
+#print(f"Token: ${token}")
 # Get products data
 logger.info('Recolectando datos de atributos')
-merchant_id = config.MERCHANT_ID
+merchant_id = MERCHANT_ID
 url = f"https://app.multivende.com/api/m/{merchant_id}/all-product-attributes"
 headers = {
         'Authorization': f'Bearer {token}'
@@ -58,10 +66,11 @@ response = requests.request("GET", url, headers=headers)
     
 try:
     response = response.json()
+    with open('data.json', 'w') as f:
+        json.dump(response, f)
 except Exception as e:
     logger.error(f"Hubo un error {e}: "+response.text)
     sys.exit(0)
-
 # Obtenemos dos grupos de atributos, lo separamos
 att = response["customAttributes"]
 att_std = ["Season", "model", "description", "htmlDescription", "shortDescription",
@@ -201,14 +210,14 @@ for i in range(df.shape[0]):
 
 logger.info('Obteniendo precios y stock')
 # Obtenemos las listas de precios
-url = f'https://app.multivende.com/api/m/{config.MERCHANT_ID}/product-price-lists'
+url = f'https://app.multivende.com/api/m/{MERCHANT_ID}/product-price-lists'
 headers = {
         'Authorization': f'Bearer {token}'
 }
 price_lists = requests.request("GET", url, headers=headers).json()
 
 # Obtenemos las bodegas
-url = f'https://app.multivende.com/api/m/{config.MERCHANT_ID}/stores-and-warehouses'
+url = f'https://app.multivende.com/api/m/{MERCHANT_ID}/stores-and-warehouses'
 warehouses = requests.request("GET", url, headers=headers).json()
 
 # Preparamos contenedores de datos
@@ -240,6 +249,6 @@ for i, row in df.iterrows():
 # Se agregan a la tabla
 df['Stock'] = stocks
 df = pd.concat([df, prices], axis=1)
-
+df.to_csv('temp_products.csv')
 logger.info('Cargando a la base de datos.')
-upload_data_products(df, Product, Attributes, engine)
+#upload_data_products(df, Product, Attributes, engine)

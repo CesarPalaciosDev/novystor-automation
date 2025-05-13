@@ -48,7 +48,7 @@ logger.info('Retrieving data from db.')
 writeCsvLog(CSV_FILE, "INFO", "DB Initializing", "The db session is initializing")
 with Session(engine) as session:
     last_auth = session.scalar(select(auth_app).order_by(auth_app.expire.desc()))
-    last_date = datetime.now() - timedelta(days=int(DAYS_TO_FETCH))
+    last_date = datetime.now() - timedelta(days=int(20))
     result = session.scalars(select(checkouts.id_venta).where(checkouts.fecha >= last_date)).all()
 writeCsvLog(CSV_FILE, "INFO", "DB Initialized", "The db session has been initialized")
 
@@ -140,6 +140,7 @@ df['courier'].fillna('Empty', inplace=True)
 
 #Fill empty shipping modes
 df['clase de envio'].fillna('Empty', inplace=True)
+df['clase de envio'].replace('', 'Empty', inplace=True)
 
 # Only store the items with N seguimiento and fecha despacho
 df = df[df["N seguimiento"].notna()]
@@ -151,7 +152,7 @@ writeCsvLog(CSV_FILE, "INFO", "Loading data", "Loading deliveries data into the 
 
 
 check_diferences_and_update_deliverys(CSV_FILE,df, deliverys, engine)
-
+##df.to_csv('temp_deliveries.csv')
 
 writeCsvLog(CSV_FILE, "INFO", "Data loaded", "The data has succesfully load into the db")
 

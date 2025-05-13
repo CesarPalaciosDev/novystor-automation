@@ -407,7 +407,7 @@ def check_diferences_and_update_deliverys(CSV_FILE, data, deliverys, engine):
             try:
                 if result == None:
                     delivery = deliverys(n_seguimiento = row["N seguimiento"], codigo = row["codigo"],
-                                codigo_venta = row["codigo venta"], courier = row["courier"], 
+                                codigo_venta = row["codigo venta"], courier = row["courier"], clase_de_envio = row["clase de envio"],
                                 delivery_status = row["delivery status"], direccion = row["direccion"],
                                 impresion_etiqueta = row["estado impresion etiqueta"], fecha_despacho = row["fecha despacho"],
                                 fecha_promesa = row["fecha promesa"], id_venta = row["id venta"], 
@@ -421,7 +421,7 @@ def check_diferences_and_update_deliverys(CSV_FILE, data, deliverys, engine):
                         .where(deliverys.id_venta == row["id venta"] and 
                             deliverys.n_venta == row["n venta"])
                         .values(n_seguimiento = row["N seguimiento"], codigo = row["codigo"],
-                                codigo_venta = row["codigo venta"], courier = row["courier"],
+                                codigo_venta = row["codigo venta"], courier = row["courier"], clase_de_envio = row["clase de envio"],
                                 delivery_status = row["delivery status"], direccion = row["direccion"],
                                 impresion_etiqueta = row["estado impresion etiqueta"], fecha_despacho = row["fecha despacho"],
                                 fecha_promesa = row["fecha promesa"], id_venta = row["id venta"], 
