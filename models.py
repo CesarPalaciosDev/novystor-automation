@@ -45,6 +45,7 @@ class deliverys(Base):
     codigo = Column(String(15), nullable=False)
     codigo_venta = Column(String(15), nullable=False)
     courier = Column(String(24), nullable=False)
+    clase_de_envio = Column(String(24), nullable=False)
     delivery_status = Column(String(9), nullable=False)
     direccion = Column(String(80))
     impresion_etiqueta = Column(String(11), nullable=False)

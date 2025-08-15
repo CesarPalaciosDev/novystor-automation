@@ -150,7 +150,7 @@ for id in ids:
         item["id padre producto"] = product["ProductVersion"]["ProductId"]
         item["id hijo producto"] = product["ProductVersionId"]
         item["cantidad"] = product["count"]
-        item["precio"] = product["gross"]
+        item["precio"] = product["totalWithDiscount"]
         ventas.append(item)
 
 # Load data to be processed
