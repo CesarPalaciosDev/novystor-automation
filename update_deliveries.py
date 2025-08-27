@@ -108,8 +108,6 @@ for id in result:
     n_seguimiento = response['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['trackingNumber'] 
     if len(n_seguimiento) == 21:
         tmp['N seguimiento'] = n_seguimiento[3:-7]
-    else: 
-        tmp['N seguimiento'] = n_seguimiento
     tmp['status etiqueta'] = response['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['shippingLabelStatus']
     tmp['estado impresion etiqueta'] = response['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['shippingLabelPrintStatus']
     tmp['id venta'] = response['_id']
