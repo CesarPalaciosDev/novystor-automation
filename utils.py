@@ -501,3 +501,149 @@ def check_difference_and_update_checkouts(CSV_FILE, data, checkouts, engine):
         session.commit()
         writeCsvLog(CSV_FILE, "INFO", "Upload info", f"Rows created {created_counter} Rows updated {updated_counter}")
         logger.error(f"Rows created {created_counter} Rows updated {updated_counter}")
+
+def check_difference_and_update_checkouts_full(CSV_FILE, data, checkouts_full, engine):
+    """Funcion para actualizacion de ventas/checkouts.
+    
+    Input : 
+    ---------
+      *  data : pandas.DataFrame. Tablas de datos con los checkouts a actualizar.
+      
+      *  checkouts : SQLAlchemy.Model. Objeto con el metadata de la tabla correspondiente a las 
+      ventas. Ver App/models/*.py para mas detalle sobre los modelos definidos..
+      
+      *  engine : SQLAlchemy.Engine. Instancia representativa de la base de datos. 
+      
+    Output :
+    ---------
+      * None.
+    """
+
+    updated_counter = 0
+    created_counter = 0
+
+    # Check if the checkout is in the DB
+    print("Cargando info...")
+    with Session(engine) as session:
+        print("Sesion iniciada..")
+        for i, row in data.iterrows():
+            if row["nombre"] == None:
+                continue
+            result = session.scalar(select(checkouts_full).where(checkouts_full.id_venta == row["id"]))
+            print("Base de datos consultada..")
+            try:
+            # Add the new checkout to the DB
+                if result == None:
+                    venta = checkouts_full(costo_envio = row["costo de envio"], estado_boleta = row["estado boleta"],
+                                estado_entrega = row["estado entrega"], estado_venta = row["estado venta"],
+                                fecha = row["fecha"],mail = row["mail"], 
+                                market = row["market"], n_venta = row["n venta"], 
+                                nombre_cliente = row["nombre"],
+                                phone = row["phone"],
+                                url_boleta = row["url boleta"], codigo = row["codigo"],
+                                codigo_venta = row["codigo venta"], courier = row["courier"], clase_de_envio = row["clase de envio"],
+                                delivery_status = row["delivery status"], direccion = row["direccion"],
+                                impresion_etiqueta = row["estado impresion etiqueta"], fecha_despacho = row["fecha despacho"],
+                                fecha_promesa = row["fecha promesa"], id_venta = row["id venta"], 
+                                status_etiqueta = row["status etiqueta"])
+                    session.add(venta)
+                    created_counter = created_counter + 1
+                    print("Creando item..") 
+                # Update the old values
+                else:
+                    stmt = (
+                        update(checkouts_full)
+                        .where(checkouts_full.id_venta == row["id"])
+                        .values(costo_envio = row["costo de envio"], estado_boleta = row["estado boleta"],
+                                estado_entrega = row["estado entrega"], estado_venta = row["estado venta"],
+                                fecha = row["fecha"],mail = row["mail"], 
+                                market = row["market"], n_venta = row["n venta"], 
+                                nombre_cliente = row["nombre"],
+                                phone = row["phone"],
+                                url_boleta = row["url boleta"], codigo = row["codigo"],
+                                codigo_venta = row["codigo venta"], courier = row["courier"], clase_de_envio = row["clase de envio"],
+                                delivery_status = row["delivery status"], direccion = row["direccion"],
+                                impresion_etiqueta = row["estado impresion etiqueta"], fecha_despacho = row["fecha despacho"],
+                                fecha_promesa = row["fecha promesa"], id_venta = row["id venta"], 
+                                status_etiqueta = row["status etiqueta"])
+                    )
+                    session.execute(stmt)
+                    updated_counter = updated_counter + 1
+                    print("Actualizando item..") 
+            except Exception as e:
+                writeCsvLog(CSV_FILE, "ERROR", "DB loading error", f"The data load has failed {e}")
+                sys.exit(0)
+        session.commit()
+        print("Info cargada exitosamente...")
+        #writeCsvLog(CSV_FILE, "INFO", "Upload info", f"Rows created {created_counter} Rows updated {updated_counter}")
+        logger.error(f"Rows created {created_counter} Rows updated {updated_counter}")
+
+def check_difference_and_update_checkout_items(CSV_FILE, data, checkout_items, engine):
+    """Funcion para actualizacion de los items de los checkouts.
+    
+    Input : 
+    ---------
+      *  data : pandas.DataFrame. Tablas de datos con los checkouts a actualizar.
+      
+      *  checkouts : SQLAlchemy.Model. Objeto con el metadata de la tabla correspondiente a las 
+      ventas. Ver App/models/*.py para mas detalle sobre los modelos definidos..
+      
+      *  engine : SQLAlchemy.Engine. Instancia representativa de la base de datos. 
+      
+    Output :
+    ---------
+      * None.
+    """
+
+    updated_counter = 0
+    created_counter = 0
+
+    # Check if the checkout is in the DB
+    print("Cargando info...")
+    with Session(engine) as session:
+        print("Sesion iniciada para productos..")
+        for i, row in data.iterrows():
+            if row["nombre producto"] == None:
+                continue
+            result = session.scalar(select(checkout_items).where(checkout_items.id_venta == row["id venta"] and checkout_items.id_hijo_producto == row["id hijo producto"]))
+            print("Base de datos consultada..")
+            try:
+            # Add the new checkout to the DB
+                if result == None:
+                    item = checkout_items(
+                                codigo_producto = row["codigo producto"],
+                                nombre_producto = row["nombre producto"],
+                                id_padre_producto = row["id padre producto"],
+                                id_hijo_producto = row["id hijo producto"],
+                                cantidad = row["cantidad"],
+                                precio = row["precio"],
+                                id_venta = row["id venta"]
+                                )
+                    session.add(item)
+                    created_counter = created_counter + 1
+                    print("Creando item..") 
+                # Update the old values
+                else:
+                    stmt = (
+                        update(checkout_items)
+                        .where(checkout_items.id_venta == row["id venta"] and checkout_items.id_hijo_producto == row["id hijo producto"])
+                        .values(
+                                codigo_producto = row["codigo producto"],
+                                nombre_producto = row["nombre producto"],
+                                id_padre_producto = row["id padre producto"],
+                                id_hijo_producto = row["id hijo producto"],
+                                cantidad = row["cantidad"], 
+                                precio = row["precio"],
+                                id_venta = row["id venta"]
+                                )
+                    )
+                    session.execute(stmt)
+                    updated_counter = updated_counter + 1
+                    print("Actualizando item..") 
+            except Exception as e:
+                writeCsvLog(CSV_FILE, "ERROR", "DB loading error", f"The data load has failed {e}")
+                sys.exit(0)
+        session.commit()
+        print("Info cargada exitosamente...")
+        #writeCsvLog(CSV_FILE, "INFO", "Upload info", f"Rows created {created_counter} Rows updated {updated_counter}")
+        logger.error(f"Rows created {created_counter} Rows updated {updated_counter}")
