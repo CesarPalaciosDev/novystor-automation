@@ -39,7 +39,7 @@ def webhook_load_checkout(id):
     with Session(engine) as session:
         last_auth = session.scalar(select(auth_app).order_by(auth_app.expire.desc()))
     
-    print(last_auth.expire)
+    #rint(last_auth.expire)
 
     if last_auth == None:
         logger.error("Failed authentication")
@@ -95,7 +95,10 @@ def webhook_load_checkout(id):
     for status in checkout["CheckoutPayments"]:
         tmp["estado venta"].append(status["paymentStatus"])
     # Campos agregados
-    tmp['fecha promesa'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['promisedDeliveryDate']
+    if checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['promisedDeliveryDate'] == None:
+        tmp['fecha promesa'] = '2262-04-11 23:47:16.854775Z'
+    else:
+        tmp['fecha promesa'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['promisedDeliveryDate']
     try:
         tmp['direccion'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['deliveryAddress'][0:79]
     except (TypeError, KeyError, IndexError):
