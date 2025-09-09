@@ -14,9 +14,20 @@ class auth_app(Base):
     expire = Column(DateTime, nullable=False)
     refresh_token = Column(String(39), nullable=False)
 
+class checkout_items(Base):
+    __tablename__ = "checkout_items"
+    id = Column(Integer, nullable=False, primary_key=True)
+    codigo_producto = Column(String(36))
+    nombre_producto = Column(String(120), nullable=False)
+    id_hijo_producto = Column(String(36), nullable=False)
+    id_padre_producto = Column(String(36), nullable=False)
+    cantidad = Column(Integer, nullable=False)
+    precio = Column(Integer, nullable=False)
+    id_venta = Column(String(36), nullable=False)
+
 
 class checkouts(Base):
-    __tablename__ = "Ventas"
+    __tablename__ = "ventas"
     id = Column(Integer, nullable=False, primary_key=True)
     cantidad = Column(Integer, nullable=False)
     codigo_producto = Column(String(36))
@@ -38,8 +49,36 @@ class checkouts(Base):
     url_boleta = Column(String(160))
 
 
+class checkouts_full(Base):
+    __tablename__ = "checkouts_full"
+    id = Column(Integer, nullable=False, primary_key=True)
+    costo_envio = Column(Float, nullable=False)
+    estado_boleta = Column(String(16))
+    estado_entrega = Column(String(9), nullable=False)
+    estado_venta = Column(String(9), nullable=False)
+    fecha = Column(DateTime, nullable=False)
+    id_venta = Column(String(36), nullable=False)
+    mail = Column(String(120))
+    market = Column(String(12), nullable=False)
+    n_venta = Column(String(24), nullable=False)
+    nombre_cliente = Column(String(120), nullable=False)
+    phone = Column(String(15), nullable=True)
+    url_boleta = Column(String(160))
+    codigo = Column(String(15), nullable=False)
+    codigo_venta = Column(String(15), nullable=False)
+    courier = Column(String(24), nullable=False)
+    clase_de_envio = Column(String(24), nullable=False)
+    delivery_status = Column(String(9), nullable=False)
+    direccion = Column(String(80))
+    impresion_etiqueta = Column(String(11), nullable=False)
+    fecha_despacho = Column(DateTime, nullable=False)
+    fecha_promesa = Column(DateTime)
+    id_venta = Column(String(36), nullable=False)
+    status_etiqueta = Column(String(5), nullable=False)
+
+
 class deliverys(Base):
-    __tablename__ = "Deliverys"
+    __tablename__ = "deliverys"
     id = Column(Integer, nullable=False, primary_key=True)
     n_seguimiento = Column(String(15), nullable=False)
     codigo = Column(String(15), nullable=False)

@@ -2,6 +2,8 @@ from flask import Flask, request, abort
 import base64
 import os
 from dotenv import load_dotenv
+from utils import *
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -35,6 +37,20 @@ def webhook():
 
     data = request.json
     print("✅ Received webhook payload:", data)
+
+    return {"status": "received"}, 200
+
+@app.route("/load-checkout", methods=["POST"])
+def webhook():
+    auth_header = request.headers.get("Authorization")
+
+    if not check_basic_auth(auth_header):
+        abort(401, description="Unauthorized")
+
+    data = request.json
+    print("✅ Received webhook payload:", data)
+
+    
 
     return {"status": "received"}, 200
 
