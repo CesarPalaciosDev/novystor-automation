@@ -1,0 +1,51 @@
+timestamp,level,description,message
+2025-09-05T16:16:48.116054-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:16:48.315713-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:17:38.557207-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:17:38.616181-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:17:42.216879-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:17:42.325712-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:17:45.807316-04:00,INFO,Total checkouts,Total checkouts retrieved in API call 23
+2025-09-05T16:19:09.441584-04:00,INFO,Loading data,Loading deliveries data into the db
+2025-09-05T16:19:13.618118-04:00,INFO,Upload info,Rows created 0 Rows updated 23
+2025-09-05T16:19:13.621120-04:00,INFO,Job succeded,This job has been completed succesfully in 95.06139898300171 seconds
+2025-09-05T16:20:48.059751-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:20:48.116302-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:20:50.478728-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:20:50.513891-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:21:12.742811-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:21:12.803892-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:21:15.232833-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:21:15.266172-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:23:10.800409-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:23:10.858497-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:23:13.313630-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:23:13.346067-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:23:47.488086-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:23:47.553984-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:23:49.999929-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:23:50.034313-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:24:25.774156-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:24:25.832087-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:24:28.809994-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:24:28.845109-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:25:12.493598-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:25:12.553246-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:25:15.399991-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:25:15.434061-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:27:02.372883-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:27:02.427888-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:27:04.783813-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:27:04.822609-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:31:00.099481-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:31:00.161852-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:31:02.748848-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:31:02.783374-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:31:39.599856-04:00,INFO,Job started,Update checkouts job has succesfully started
+2025-09-05T16:31:39.666322-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:31:42.082201-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:31:42.115429-04:00,INFO,Getting checkouts,Calling the Multivende API to get the checkouts
+2025-09-05T16:32:15.934855-04:00,INFO,Total checkouts,Total checkouts retrieved in API call 250
+2025-09-05T16:42:43.485331-04:00,INFO,Loading data,Loading deliveries data into the db
+2025-09-05T16:43:22.487126-04:00,INFO,Upload info,Rows created 181 Rows updated 70
+2025-09-05T16:43:22.489123-04:00,INFO,Job succeded,This job has been completed succesfully in 702.886745929718 seconds

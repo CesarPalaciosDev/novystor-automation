@@ -1,0 +1,14 @@
+timestamp,level,description,message
+2025-09-05T16:45:32.219502-04:00,INFO,Job started,Update deliveries job has succesfully started
+2025-09-05T16:45:32.279172-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T16:45:34.025914-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T16:45:34.063737-04:00,INFO,Getting deliveries from checkouts,Total rows read 742
+2025-09-05T16:54:13.281413-04:00,INFO,Loading data,Loading deliveries data into the db
+2025-09-05T17:00:34.811818-04:00,INFO,Job started,Update deliveries job has succesfully started
+2025-09-05T17:00:34.897578-04:00,INFO,DB Initializing,The db session is initializing
+2025-09-05T17:00:36.765783-04:00,INFO,DB Initialized,The db session has been initialized
+2025-09-05T17:00:36.800870-04:00,INFO,Getting deliveries from checkouts,Total rows read 742
+2025-09-05T17:16:27.766809-04:00,INFO,Loading data,Loading deliveries data into the db
+2025-09-05T17:16:52.589780-04:00,INFO,Upload info,Rows created 5 Rows updated 159
+2025-09-05T17:16:52.593154-04:00,INFO,Data loaded,The data has succesfully load into the db
+2025-09-05T17:16:52.595194-04:00,INFO,Job succeded,This job has been completed succesfully in 977.7833750247955 seconds
