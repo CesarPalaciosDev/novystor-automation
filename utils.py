@@ -39,6 +39,8 @@ def webhook_load_checkout(id):
     with Session(engine) as session:
         last_auth = session.scalar(select(auth_app).order_by(auth_app.expire.desc()))
     
+    print(last_auth.expire)
+
     if last_auth == None:
         logger.error("Failed authentication")
         sys.exit(0)
