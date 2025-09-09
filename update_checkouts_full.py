@@ -217,7 +217,7 @@ df = df.replace({np.NaN: None})
 
 
 logger.info('Cargando a la DB.')
-check_difference_and_update_checkouts_full(CSV_FILE,df, checkouts_full, engine)
+check_difference_and_update_checkouts_full(df, checkouts_full, engine)
 check_difference_and_update_checkout_items(dfp, checkout_items, engine)
 et = time.time()
 elapsed_time = et - st
