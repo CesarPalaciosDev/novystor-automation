@@ -11,10 +11,14 @@ from utils import *
 from dotenv import load_dotenv
 load_dotenv()
 
-try:
-    import config
-except:
-    import test as config
+LOGS_PATH = os.getenv("LOGS_PATH")
+SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+ssl = os.getenv("ssl")
+SECRET_KEY = os.getenv("SECRET_KEY")
+MERCHANT_ID = os.getenv("MERCHANT_ID")
+DAYS_TO_FETCH = os.getenv("DAYS")
+CSV_FILE = f"{LOGS_PATH}/deliveries_log.csv"
+
     
 # Setting up logger
 logger = logging.getLogger(__name__)
@@ -22,14 +26,13 @@ logging.basicConfig(format='%(asctime)s: %(message)s', stream=sys.stdout,
                     level=logging.INFO)
 
 # Making engine
-engine = create_engine(config.SQLALCHEMY_DATABASE_URI,
-                       connect_args={
-                            "ssl": {
-                                "ca":config.ssl
-                                }     
+engine = create_engine(SQLALCHEMY_DATABASE_URI,
+                        pool_recycle=3600,   # recycle connections every hour
+                        pool_pre_ping=True,
+                        connect_args={
+                            "ssl_ca": ssl
                             }
-                       )
-
+                        )
 # Get data from tables
 logger.info('Retrieving data from db.')
 with Session(engine) as session:
@@ -46,10 +49,10 @@ if diff.total_seconds()/3600 > 6:
     sys.exit(0)
 
 # Decrypt token
-token = decrypt(last_auth.token, config.SECRET_KEY)
+token = decrypt(last_auth.token, SECRET_KEY)
 
 # Getting data from ids
-merchant_id = config.MERCHANT_ID
+merchant_id = MERCHANT_ID
 logger.info("Getting data from brands")
 brands = get_data_brands(token, merchant_id)     
 

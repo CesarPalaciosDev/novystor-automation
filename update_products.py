@@ -29,12 +29,12 @@ logging.basicConfig(format='%(asctime)s: %(message)s', stream=sys.stdout,
 
 # Making engine
 engine = create_engine(SQLALCHEMY_DATABASE_URI,
-                       connect_args={
-                            "ssl": {
-                                "ca":ssl
-                                }     
+                        pool_recycle=3600,   # recycle connections every hour
+                        pool_pre_ping=True,
+                        connect_args={
+                            "ssl_ca": ssl
                             }
-                       )
+                        )
 
 # Get data from tables
 logger.info('Retrieving data from db.')

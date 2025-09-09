@@ -24,8 +24,6 @@ CSV_FILE = f"{LOGS_PATH}/checkouts_log.csv"
 
 #writeCsvLog(CSV_FILE, "INFO", "Job started", "Update checkouts full job has succesfully started")
 
-print(ssl)
-
 st = time.time()
 # Setting up logger
 logger = logging.getLogger(__name__)
@@ -47,11 +45,9 @@ with Session(engine) as session:
     last_auth = session.scalar(select(auth_app).order_by(auth_app.expire.desc()))
     result = session.scalar(select(checkouts_full).order_by(checkouts_full.fecha.desc()))
     now_add = datetime.now() + timedelta(days=2)
-    #now = now_add.strftime("%Y-%m-%dT%H:%M:%S")
+    now = now_add.strftime("%Y-%m-%dT%H:%M:%S")
     last_update = datetime.now() - timedelta(days=3) # One day before to update changes of recents sells
-    #last = last_update.strftime("%Y-%m-%dT%H:%M:%S")
-    last = "2025-04-01T00:00:00"
-    now = "2025-04-02T00:00:00"
+    last = last_update.strftime("%Y-%m-%dT%H:%M:%S")
 #writeCsvLog(CSV_FILE, "INFO", "DB Initialized", "The db session has been initialized")
 
 print("From:" + now + " To " + last)
@@ -60,7 +56,7 @@ if last_auth == None:
     logger.error("Failed authentication")
     #writeCsvLog(CSV_FILE, "ERROR", "Failed authentication", "Please review the auth data")
     sys.exit(0)
-print("Last Auth Expire ", last_auth.expire)
+#print("Last Auth Expire ", last_auth.expire)
 
 diff = datetime.now() - last_auth.expire
 # The token expired
@@ -76,10 +72,11 @@ token = decrypt(last_auth.token, SECRET_KEY)
 logger.info('Recolectando datos de ventas')
 #writeCsvLog(CSV_FILE, "INFO", "Getting checkouts", "Calling the Multivende API to get the checkouts")
 merchant_id = MERCHANT_ID
-url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/p/1?_sold_at_from={last}&_sold_at_to={now}"
+url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/p/1?_updated_at_from={last}&_updated_at_to={now}"
 headers = {
         'Authorization': f'Bearer {token}'
 }
+
 # Get id data from the checkouts
 response = requests.request("GET", url, headers=headers)
 try:
@@ -103,7 +100,7 @@ for p in range(0, pages):
     
     for d in data["entries"]:
         ids.append(d["_id"])
-#ids =  ['bad6cf81-900b-4e4a-a677-e2cd7d4d4b3a']
+
 
 # Now the information completed
 logger.info('Cargando informacion de ventas.')
@@ -194,7 +191,7 @@ for id in ids:
         productos.append(item)
 
 dfp = pd.DataFrame(productos)
-# dfp.to_csv("productos_temp.csv")
+#dfp.to_csv("productos_temp.csv")
 
 
 # Load data to be processed
@@ -220,11 +217,8 @@ df = df.replace({np.NaN: None})
 
 
 logger.info('Cargando a la DB.')
-#writeCsvLog(CSV_FILE, "INFO", "Loading data", "Loading deliveries data into the db")
-# df.to_csv('temp_checkouts_full.csv')
 check_difference_and_update_checkouts_full(CSV_FILE,df, checkouts_full, engine)
-check_difference_and_update_checkout_items(CSV_FILE,dfp, checkout_items, engine)
+check_difference_and_update_checkout_items(dfp, checkout_items, engine)
 et = time.time()
 elapsed_time = et - st
-#writeCsvLog(CSV_FILE, "INFO", "Job succeded",  f"This job has been completed succesfully in {elapsed_time} seconds")
 logger.info(f"This job has been completed succesfully in {elapsed_time} seconds")

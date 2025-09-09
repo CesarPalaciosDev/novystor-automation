@@ -27,7 +27,7 @@ class checkout_items(Base):
 
 
 class checkouts(Base):
-    __tablename__ = "Ventas"
+    __tablename__ = "ventas"
     id = Column(Integer, nullable=False, primary_key=True)
     cantidad = Column(Integer, nullable=False)
     codigo_producto = Column(String(36))
@@ -78,7 +78,7 @@ class checkouts_full(Base):
 
 
 class deliverys(Base):
-    __tablename__ = "Deliverys"
+    __tablename__ = "deliverys"
     id = Column(Integer, nullable=False, primary_key=True)
     n_seguimiento = Column(String(15), nullable=False)
     codigo = Column(String(15), nullable=False)

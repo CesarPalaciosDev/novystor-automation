@@ -6,3 +6,4 @@ digicertificate.pem
 /logs
 .env
 .vscode
+test.py

@@ -32,12 +32,12 @@ logging.basicConfig(format='%(asctime)s: %(message)s', stream=sys.stdout,
 
 # Making engine
 engine = create_engine(SQLALCHEMY_DATABASE_URI,
-                       connect_args={
-                            "ssl": {
-                                "ca":ssl
-                                }     
+                        pool_recycle=3600,   # recycle connections every hour
+                        pool_pre_ping=True,
+                        connect_args={
+                            "ssl_ca": ssl
                             }
-                       )
+                        )
 
 # Get data from tables
 writeCsvLog(CSV_FILE, "INFO", "DB Initializing", "The db session is initializing")
@@ -69,16 +69,20 @@ token = decrypt(last_auth.token, SECRET_KEY)
 logger.info('Recolectando datos de ventas')
 writeCsvLog(CSV_FILE, "INFO", "Getting checkouts", "Calling the Multivende API to get the checkouts")
 merchant_id = MERCHANT_ID
-url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/p/1?_updated_at_from={last}&_updated_at_to={now}"
+url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/p/1?_sold_at_from={last}&_sold_at_to={now}"
 headers = {
         'Authorization': f'Bearer {token}'
 }
+
+print(url)
 # Get id data from the checkouts
 response = requests.request("GET", url, headers=headers)
 try:
     response = response.json()
 except Exception as e:
     logger.error(f'Hubo un error {e}: {response.text}')
+
+print(response)
     
 pages = response["pagination"]["total_pages"]
 ids= []
