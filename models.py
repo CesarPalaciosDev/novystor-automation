@@ -64,6 +64,7 @@ class checkouts_full(Base):
     nombre_cliente = Column(String(120), nullable=False)
     phone = Column(String(15), nullable=True)
     url_boleta = Column(String(160))
+    n_seguimiento = Column(String(15), nullable=False)
     codigo = Column(String(15), nullable=False)
     codigo_venta = Column(String(15), nullable=False)
     courier = Column(String(24), nullable=False)

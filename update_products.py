@@ -249,6 +249,10 @@ for i, row in df.iterrows():
 # Se agregan a la tabla
 df['Stock'] = stocks
 df = pd.concat([df, prices], axis=1)
-df.to_csv('temp_products.csv')
+
+#Archivos de depuración
+
+#df.to_csv('temp_products.csv')
+#df.to_excel('products.xlsx', index=False)
 logger.info('Cargando a la base de datos.')
-#upload_data_products(df, Product, Attributes, engine)
+upload_data_products(df, Product, Attributes, engine)

@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 from utils import *
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(override=True)
 
 LOGS_PATH = os.getenv("LOGS_PATH")
 SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
@@ -46,7 +46,7 @@ with Session(engine) as session:
     result = session.scalar(select(checkouts_full).order_by(checkouts_full.fecha.desc()))
     now_add = datetime.now() + timedelta(days=2)
     now = now_add.strftime("%Y-%m-%dT%H:%M:%S")
-    last_update = datetime.now() - timedelta(days=3) # One day before to update changes of recents sells
+    last_update = datetime.now() - timedelta(days=30) # One day before to update changes of recents sells
     last = last_update.strftime("%Y-%m-%dT%H:%M:%S")
 #writeCsvLog(CSV_FILE, "INFO", "DB Initialized", "The db session has been initialized")
 
@@ -100,7 +100,6 @@ for p in range(0, pages):
     
     for d in data["entries"]:
         ids.append(d["_id"])
-
 
 # Now the information completed
 logger.info('Cargando informacion de ventas.')
@@ -170,6 +169,9 @@ for id in ids:
     print("N Seguimiento", n_seguimiento) 
     if n_seguimiento and len(n_seguimiento) == 21:
         tmp['N seguimiento'] = n_seguimiento[3:-7]
+    elif n_seguimiento != None:
+        if len(n_seguimiento) != 36:
+            tmp['N seguimiento'] = n_seguimiento
     tmp['status etiqueta'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['shippingLabelStatus']
     tmp['estado impresion etiqueta'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['shippingLabelPrintStatus']
     tmp['id venta'] = checkout['_id']
@@ -191,7 +193,6 @@ for id in ids:
         productos.append(item)
 
 dfp = pd.DataFrame(productos)
-#dfp.to_csv("productos_temp.csv")
 
 
 # Load data to be processed
@@ -214,7 +215,7 @@ for i in df["estado venta"].index:
     
 df = df.replace({np.NaN: None})
 
-
+#df.to_csv("checkouts_full.csv")
 
 logger.info('Cargando a la DB.')
 check_difference_and_update_checkouts_full(df, checkouts_full, engine)

@@ -427,11 +427,13 @@ def upload_data_products(df, Product, Attributes, engine):
                 result = session.scalar(select(Product).where(Product.id_padre == row['IDENTIFICADOR_PADRE'] and 
                                                               Product.id_hijo == row['IDENTIFICADOR_HIJO']))
                 # For each attribute of product check if key/value is in DB
-                atts = row[23:]
+                atts = row[23:-13]
                 attributes = []
                 for i in atts[atts.notna()].index:
                     # If is number create the correct object
-                    if atts[i].replace('.', '').isdigit():
+                    #print("Atts [i] ",atts[i], "\n")
+                    att_value = str(atts[i])
+                    if  att_value.replace('.', '').isdigit():
                         attribute = Attributes(name = i, number_value = float(atts[i]))
                         # Check if it's in DB
                         exists_criteria = (select(Attributes.id)
@@ -475,6 +477,7 @@ def upload_data_products(df, Product, Attributes, engine):
                                           internalSku = row['internalSku'],
                                           width = row['width'],
                                           length = row['length'],
+                                          stock = 0,
                                           height = row['height'],
                                           weight = row['weight'],
                                           tags = row['tags'],
@@ -512,6 +515,7 @@ def upload_data_products(df, Product, Attributes, engine):
                                          width = row['width'],
                                          length = row['length'],
                                          height = row['height'],
+                                         stock = 0,
                                          weight = row['weight'],
                                          tags = row['tags'],
                                          picture = row['picture url']))
@@ -684,7 +688,7 @@ def check_difference_and_update_checkouts_full(data, checkouts_full, engine):
                                 market = row["market"], n_venta = row["n venta"], 
                                 nombre_cliente = row["nombre"],
                                 phone = row["phone"],
-                                url_boleta = row["url boleta"], codigo = row["codigo"],
+                                url_boleta = row["url boleta"],n_seguimiento = row["N seguimiento"], codigo = row["codigo"],
                                 codigo_venta = row["codigo venta"], courier = row["courier"], clase_de_envio = row["clase de envio"],
                                 delivery_status = row["delivery status"], direccion = row["direccion"],
                                 impresion_etiqueta = row["estado impresion etiqueta"], fecha_despacho = row["fecha despacho"],
@@ -704,7 +708,7 @@ def check_difference_and_update_checkouts_full(data, checkouts_full, engine):
                                 market = row["market"], n_venta = row["n venta"], 
                                 nombre_cliente = row["nombre"],
                                 phone = row["phone"],
-                                url_boleta = row["url boleta"], codigo = row["codigo"],
+                                url_boleta = row["url boleta"],n_seguimiento = row["N seguimiento"], codigo = row["codigo"],
                                 codigo_venta = row["codigo venta"], courier = row["courier"], clase_de_envio = row["clase de envio"],
                                 delivery_status = row["delivery status"], direccion = row["direccion"],
                                 impresion_etiqueta = row["estado impresion etiqueta"], fecha_despacho = row["fecha despacho"],
@@ -715,6 +719,7 @@ def check_difference_and_update_checkouts_full(data, checkouts_full, engine):
                     updated_counter = updated_counter + 1
                     print("Actualizando item..") 
             except Exception as e:
+                print(e)
                 sys.exit(0)
         session.commit()
         print("Info cargada exitosamente...")
@@ -748,7 +753,7 @@ def check_difference_and_update_checkout_items(data, checkout_items, engine):
         for i, row in data.iterrows():
             if row["nombre producto"] == None:
                 continue
-            result = session.scalar(select(checkout_items).where(checkout_items.id_venta == row["id venta"] and checkout_items.id_hijo_producto == row["id hijo producto"]))
+            result = session.scalar(select(checkout_items).where(checkout_items.id_venta == row["id venta"]).where(checkout_items.id_hijo_producto == row["id hijo producto"]))                
             print("Base de datos consultada..")
             try:
             # Add the new checkout to the DB
@@ -797,9 +802,9 @@ def upsert_checkout_full(data, checkouts_full):
     Input : 
     ---------
       *  data : pandas.DataFrame. Diccionario de datos con la informacion de checkout a actualizar.
-      
+
       *  engine : SQLAlchemy.Engine. Instancia representativa de la base de datos. 
-      
+
     Output :
     ---------
       * None.
