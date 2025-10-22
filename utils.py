@@ -108,9 +108,13 @@ def webhook_load_checkout(id):
     tmp['clase de envio'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['shippingMode']
     tmp['fecha despacho'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['handlingDateLimit']
     tmp['delivery status'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['deliveryStatus']
-    n_seguimiento = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['trackingNumber'] 
+    n_seguimiento = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['trackingNumber']
+    print("N Seguimiento", n_seguimiento) 
     if n_seguimiento and len(n_seguimiento) == 21:
         tmp['N seguimiento'] = n_seguimiento[3:-7]
+    elif n_seguimiento != None:
+        if len(n_seguimiento) != 36:
+            tmp['N seguimiento'] = n_seguimiento
     tmp['status etiqueta'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['shippingLabelStatus']
     tmp['estado impresion etiqueta'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['shippingLabelPrintStatus']
     tmp['id venta'] = checkout['_id']
