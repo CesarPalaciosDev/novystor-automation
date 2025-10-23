@@ -115,6 +115,8 @@ def webhook_load_checkout(id):
     elif n_seguimiento != None:
         if len(n_seguimiento) != 36:
             tmp['N seguimiento'] = n_seguimiento
+        else:  
+            tmp['N seguimiento'] = None
     tmp['status etiqueta'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['shippingLabelStatus']
     tmp['estado impresion etiqueta'] = checkout['DeliveryOrderInCheckouts'][0]['DeliveryOrder']['shippingLabelPrintStatus']
     tmp['id venta'] = checkout['_id']
@@ -136,7 +138,7 @@ def webhook_load_checkout(id):
         productos.append(item)
 
     #Crear dataframes
-    print(ventas)
+    print("Ventas a cargar: \n\n", ventas)
 
     df = pd.DataFrame(ventas)
     dfp = pd.DataFrame(productos)
