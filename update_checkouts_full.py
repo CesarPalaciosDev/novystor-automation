@@ -46,7 +46,7 @@ with Session(engine) as session:
     result = session.scalar(select(checkouts_full).order_by(checkouts_full.fecha.desc()))
     now_add = datetime.now() + timedelta(days=2)
     now = now_add.strftime("%Y-%m-%dT%H:%M:%S")
-    last_update = datetime.now() - timedelta(days=30) # One day before to update changes of recents sells
+    last_update = datetime.now() - timedelta(days=5) # One day before to update changes of recents sells
     last = last_update.strftime("%Y-%m-%dT%H:%M:%S")
 #writeCsvLog(CSV_FILE, "INFO", "DB Initialized", "The db session has been initialized")
 
@@ -72,7 +72,8 @@ token = decrypt(last_auth.token, SECRET_KEY)
 logger.info('Recolectando datos de ventas')
 #writeCsvLog(CSV_FILE, "INFO", "Getting checkouts", "Calling the Multivende API to get the checkouts")
 merchant_id = MERCHANT_ID
-url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/p/1?_updated_at_from={last}&_updated_at_to={now}"
+#url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/p/1?_created_at_from={last}&_created_at_to={now}"
+url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/limit/50?_sold_at_from={last}&_sold_at_to={now}"
 headers = {
         'Authorization': f'Bearer {token}'
 }
@@ -86,15 +87,23 @@ except Exception as e:
 
 #print(response)
     
-pages = response["pagination"]["total_pages"]
+#pages = response["pagination"]["total_pages"]
+scroll_id = response["pagination"]["scroll_id"]
+print("Scroll id: ", scroll_id)
 ids= []
+
+for d in response["entries"]:
+        ids.append(d["_id"])
+
 # Extract all ids
 logger.info('Cargando ids de ventas.')
-for p in range(0, pages):
-    url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/p/{p+1}?_sold_at_from={last}&_sold_at_to={now}"
+while scroll_id is not None:
+    #url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/p/{p+1}?_updated_at_from={last}&_updated_at_to={now}"
+    url = f"https://app.multivende.com/api/m/{merchant_id}/checkouts/light/limit/500?_sold_at_from={last}&_sold_at_to={now}&_scroll_id={scroll_id}"
     data = requests.get(url, headers=headers)
     try:
         data = data.json()
+        scroll_id = data["pagination"]["scroll_id"]
     except Exception as e:
         logger.error(f'Hubo un error {e}: {response.text}')
     
