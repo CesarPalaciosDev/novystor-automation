@@ -1,5 +1,5 @@
 import sqlalchemy.orm as db
-from sqlalchemy import Column, Integer, Text, DateTime, String, Float, ForeignKey, Table
+from sqlalchemy import Boolean, Column, Integer, Text, DateTime, String, Float, ForeignKey, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
@@ -165,6 +165,7 @@ class Product(Base):
     CBarra05: Mapped[str] = mapped_column(String(24), nullable=True)
     CBarra06: Mapped[str] = mapped_column(String(24), nullable=True)
     Costo01: Mapped[float] = mapped_column(Float, nullable=True)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=True)
 
     attributes = relationship('Attributes', secondary = 'association_table')
 

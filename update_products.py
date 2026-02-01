@@ -95,6 +95,9 @@ for p in range(pages-1):
 # Extraemos los id de cada uno
 ids = [item["_id"] for item in data]
 
+logger.info("Pagins totales: %d", pages)
+logger.info("Total de productos: %d", len(ids))
+
 # Para cada producto, guardamos sus atributos
 logger.debug("Solicitando atributos de productos por ids.")
 data = []

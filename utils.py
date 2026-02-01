@@ -63,7 +63,7 @@ def webhook_load_checkout(id):
 
     tmp = {}
     url = f"https://app.multivende.com/api/checkouts/{id}"
-    checkout = requests.get(url, headers=headers)
+    checkout = requests.get(url, headers=headers, timeout=10)
     try:
         checkout = checkout.json()
         checkout['soldAt']
@@ -873,3 +873,62 @@ def upsert_checkout_full(data, checkouts_full):
     session.commit()
     print("Info cargada exitosamente...")
     #writeCsvLog(CSV_FILE, "INFO", "Upload info", f"Rows created {created_counter} Rows updated {updated_counter}")
+
+def sync_product_with_ids(product_ids, Product, engine):
+    """Funcion para sincronizar productos por lista de IDs realizando soft delete.
+    
+    Realiza soft delete (active=False) a todos los productos cuyo ID no esté 
+    en la lista product_ids. Los productos en la lista se mantienen activos.
+    
+    Input : 
+    ---------
+      *  product_ids : list. Lista de IDs de productos a mantener activos.
+      
+      *  Product : DeclarativeMeta. El modelo de datos de SQLAlchemy para la tabla products.
+      
+      *  engine : SQLAlchemy.Engine. Instancia representativa de la base de datos. 
+      
+    Output :
+    ---------
+      * None.
+    """
+    logger.info('Sincronizando productos por IDs.')
+    
+    with Session(engine) as session:
+        try:
+            # Si se proporcionó una lista de IDs válida
+            if product_ids is not None and len(product_ids) > 0:
+                # 1. Soft delete: Marcar como inactivos (active=False) los que NO están en la lista
+                # El operador ~ es el NOT de SQLAlchemy
+                stmt_deactivate = (
+                    update(Product)
+                    .where(~Product.id_padre.in_(product_ids))
+                    .values(active=False)
+                )
+                result_deactivate = session.execute(stmt_deactivate)
+                logger.info(f'Se desactivaron {result_deactivate.rowcount} productos que no estaban en la lista.')
+                
+                # 2. Asegurar que los productos que SÍ están en la lista estén activos (active=True)
+                stmt_activate = (
+                    update(Product)
+                    .where(Product.id_padre.in_(product_ids))
+                    .values(active=True)
+                )
+                result_activate = session.execute(stmt_activate)
+                logger.info(f'Se aseguraron como activos {result_activate.rowcount} productos de la lista.')
+            
+            else:
+                # Si la lista está vacía o es None, desactivamos todos los productos
+                logger.warning('Lista de IDs vacía. Desactivando todos los productos.')
+                stmt_all = update(Product).values(active=False)
+                result_all = session.execute(stmt_all)
+                logger.info(f'Se desactivaron un total de {result_all.rowcount} productos.')
+            
+            session.commit()
+            print("Sincronización y soft delete completados exitosamente.")
+            
+        except Exception as e:
+            session.rollback()
+            logger.error(f"Error durante la sincronización de productos: {e}")
+            # Dependiendo de tu flujo, puedes usar sys.exit(1) o dejar que la excepción suba
+            raise e
