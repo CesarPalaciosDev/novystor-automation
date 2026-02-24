@@ -38,9 +38,9 @@ logging.basicConfig(format='%(asctime)s: %(message)s', stream=sys.stdout,
 engine = create_engine(SQLALCHEMY_DATABASE_URI,
                         pool_recycle=3600,   # recycle connections every hour
                         pool_pre_ping=True,
-                        connect_args={
-                            "ssl_ca": ssl
-                            }
+                        # connect_args={
+                        #     "ssl_ca": ssl
+                        #     }
                         )
 
 # Get data from tables
@@ -48,8 +48,8 @@ logger.info('Retrieving data from db.')
 writeCsvLog(CSV_FILE, "INFO", "DB Initializing", "The db session is initializing")
 with Session(engine) as session:
     last_auth = session.scalar(select(auth_app).order_by(auth_app.expire.desc()))
-    last_date = datetime.now() - timedelta(days=int(20))
-    result = session.scalars(select(checkouts.id_venta).where(checkouts.fecha >= last_date)).all()
+    last_date = datetime.now() - timedelta(days=int(10))
+    result = session.scalars(select(checkouts_full.id_venta).where(checkouts_full.fecha >= last_date)).all()
 writeCsvLog(CSV_FILE, "INFO", "DB Initialized", "The db session has been initialized")
 
 if last_auth == None:
@@ -116,7 +116,7 @@ for id in result:
 
 # Create dataframe and adjust formats
 df = pd.DataFrame(data)
-#df.to_csv('temp_init.csv')
+df.to_csv('temp_init.csv')
 df.fillna(np.nan, inplace=True)
 
 df["fecha despacho"] = pd.to_datetime(df["fecha despacho"])
