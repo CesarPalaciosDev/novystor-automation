@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update, create_engine
 from models import auth_app, checkouts_full, checkout_items
+from supabase_sync import sync_checkout
 from cryptography.fernet import Fernet
 import pandas as pd
 import numpy as np
@@ -162,6 +163,12 @@ def webhook_load_checkout(id):
 
     check_difference_and_update_checkouts_full(df, checkouts_full, engine)
     check_difference_and_update_checkout_items(dfp, checkout_items, engine)
+
+    # Dual-write: sync a Supabase de inmediato (sin esperar novy-upsert cron)
+    try:
+        sync_checkout(tmp, productos)
+    except Exception as e:
+        logger.warning('[SupabaseSync] Error en sync — MySQL write OK, continuando: %s', e)
 
     return True
 
@@ -780,7 +787,8 @@ def check_difference_and_update_checkout_items(data, checkout_items, engine):
                 else:
                     stmt = (
                         update(checkout_items)
-                        .where(checkout_items.id_venta == row["id venta"] and checkout_items.id_hijo_producto == row["id hijo producto"])
+                        .where(checkout_items.id_venta == row["id venta"])
+                        .where(checkout_items.id_hijo_producto == row["id hijo producto"])
                         .values(
                                 codigo_producto = row["codigo producto"],
                                 nombre_producto = row["nombre producto"],
